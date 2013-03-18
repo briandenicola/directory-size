@@ -23,8 +23,8 @@ let main args =
         display( source.FullName, file_size )
     with
         | :? System.IndexOutOfRangeException -> printfn "Must pass a directory name"
-        | :? System.IO.DirectoryNotFoundException -> printfn "Could not find the directory passed"
-        | :? System.AccessViolationException -> printfn "Access Denied"
-        | :? System.UnauthorizedAccessException -> printfn "Access Denied"
+        | :? System.IO.DirectoryNotFoundException as exn  -> printfn "Could not find the directory passed - %A" exn.Message
+        | :? System.AccessViolationException as exn -> printfn "Access Denied - %A" exn.Message
+        | :? System.UnauthorizedAccessException as exn -> printfn "Access Denied - %A" exn.Message
         | _ -> printfn "Unknown Exception"
     0
