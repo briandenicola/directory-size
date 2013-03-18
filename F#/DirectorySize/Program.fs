@@ -15,12 +15,8 @@ let rec size ( fi : FileSystemInfo ) =
 let main args =
     try
         let source = new DirectoryInfo(args.[0])
-
-        for directory in source.GetDirectories() do
-            display( directory.FullName, size(directory) )
-
-        let file_size = source.GetFiles() |> Seq.sumBy(fun f -> f.Length) 
-        display( source.FullName, file_size )
+        source.GetDirectories() |> Seq.iter( fun f -> display( f.FullName, size(f) ) )
+        display(source.FullName, (source.GetFiles() |> Seq.sumBy(fun f -> f.Length))  )
     with
         | :? System.IndexOutOfRangeException -> printfn "Must pass a directory name"
         | :? System.IO.DirectoryNotFoundException as exn  -> printfn "Could not find the directory passed - %A" exn.Message
