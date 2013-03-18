@@ -3,3 +3,9 @@ D:\temp\DirectorySize\DirectorySize\bin\Release\DirectorySize.exe
 D:\temp\DirectorySize\DirectorySize\bin\Release\DirectorySize.pdb
 D:\temp\DirectorySize\DirectorySize\obj\x86\Release\DirectorySize.exe
 D:\temp\DirectorySize\DirectorySize\obj\x86\Release\DirectorySize.pdb
+D:\Users\US32784\Code\GitHub\DirectorySize\F#\DirectorySize\bin\Release\DirectorySize.XML
+D:\Users\US32784\Code\GitHub\DirectorySize\F#\DirectorySize\bin\Release\DirectorySize.exe
+D:\Users\US32784\Code\GitHub\DirectorySize\F#\DirectorySize\bin\Release\DirectorySize.pdb
+D:\Users\US32784\Code\GitHub\DirectorySize\F#\DirectorySize\obj\x86\Release\DirectorySize.fsprojResolveAssemblyReference.cache
+D:\Users\US32784\Code\GitHub\DirectorySize\F#\DirectorySize\obj\x86\Release\DirectorySize.exe
+D:\Users\US32784\Code\GitHub\DirectorySize\F#\DirectorySize\obj\x86\Release\DirectorySize.pdb

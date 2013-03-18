@@ -19,7 +19,7 @@ let main args =
         for directory in source.GetDirectories() do
             display( directory.FullName, size(directory) )
 
-        let file_size = source.GetFiles() |> Seq.sumBy(fun f -> size(f)) 
+        let file_size = source.GetFiles() |> Seq.sumBy(fun f -> f.Length) 
         display( source.FullName, file_size )
     with
         | :? System.IndexOutOfRangeException -> printfn "Must pass a directory name"
