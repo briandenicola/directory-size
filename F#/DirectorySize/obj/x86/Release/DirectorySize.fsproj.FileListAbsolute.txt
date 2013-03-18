@@ -1,0 +1,5 @@
+D:\temp\DirectorySize\DirectorySize\bin\Release\DirectorySize.XML
+D:\temp\DirectorySize\DirectorySize\bin\Release\DirectorySize.exe
+D:\temp\DirectorySize\DirectorySize\bin\Release\DirectorySize.pdb
+D:\temp\DirectorySize\DirectorySize\obj\x86\Release\DirectorySize.exe
+D:\temp\DirectorySize\DirectorySize\obj\x86\Release\DirectorySize.pdb

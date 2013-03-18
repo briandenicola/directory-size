@@ -1,0 +1,10 @@
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\obj\Debug\DirectorySize.exe
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\obj\Debug\DirectorySize.pdb
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\bin\Debug\DirectorySize.exe.manifest
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\bin\Debug\DirectorySize.application
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\bin\Debug\DirectorySize.exe
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\bin\Debug\DirectorySize.pdb
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\obj\Debug\ResolveAssemblyReference.cache
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\obj\Debug\DirectorySize.TrustInfo.xml
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\obj\Debug\DirectorySize.exe.manifest
+C:\Data\E148884\Scripts\DirectorySize\DirectorySize\DirectorySize\obj\Debug\DirectorySize.application
