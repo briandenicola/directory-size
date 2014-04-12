@@ -1,6 +1,0 @@
-D:\temp\DirectorySize\DirectorySize\obj\x86\Debug\DirectorySize.fsprojResolveAssemblyReference.cache
-D:\temp\DirectorySize\DirectorySize\bin\Debug\DirectorySize.XML
-D:\temp\DirectorySize\DirectorySize\bin\Debug\DirectorySize.exe
-D:\temp\DirectorySize\DirectorySize\bin\Debug\DirectorySize.pdb
-D:\temp\DirectorySize\DirectorySize\obj\x86\Debug\DirectorySize.exe
-D:\temp\DirectorySize\DirectorySize\obj\x86\Debug\DirectorySize.pdb
