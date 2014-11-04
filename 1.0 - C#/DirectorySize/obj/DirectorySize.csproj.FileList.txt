@@ -1,0 +1,15 @@
+obj\Debug\DirectorySize.exe
+obj\Debug\DirectorySize.pdb
+bin\Release\DirectorySize.exe
+bin\Release\DirectorySize.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\DirectorySize.exe
+obj\Release\DirectorySize.pdb
+bin\Debug\DirectorySize.exe
+bin\Debug\DirectorySize.pdb
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\DirectorySize.exe.manifest
+bin\Debug\DirectorySize.application
+obj\Debug\DirectorySize.TrustInfo.xml
+obj\Debug\DirectorySize.exe.manifest
+obj\Debug\DirectorySize.application

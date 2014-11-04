@@ -1,0 +1,7 @@
+C:\Local-Code\DirectorySize.v2\DirectorySize.v2\bin\Debug\DirectorySize.v2.exe.config
+D:\SyncRoot\SkyDrive\SD-Code\DirectorySize.v2\DirectorySize.v2\bin\Debug\DirectorySize.v2.exe.config
+D:\SyncRoot\SkyDrive\SD-Code\DirectorySize.v2\DirectorySize.v2\bin\Debug\DirectorySize.v2.exe
+D:\SyncRoot\SkyDrive\SD-Code\DirectorySize.v2\DirectorySize.v2\bin\Debug\DirectorySize.v2.pdb
+D:\SyncRoot\SkyDrive\SD-Code\DirectorySize.v2\DirectorySize.v2\obj\Debug\DirectorySize.v2.csprojResolveAssemblyReference.cache
+D:\SyncRoot\SkyDrive\SD-Code\DirectorySize.v2\DirectorySize.v2\obj\Debug\DirectorySize.v2.exe
+D:\SyncRoot\SkyDrive\SD-Code\DirectorySize.v2\DirectorySize.v2\obj\Debug\DirectorySize.v2.pdb
