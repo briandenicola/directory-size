@@ -4,3 +4,9 @@ D:\Users\US32784\Code\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\bin\Release
 D:\Users\US32784\Code\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\obj\Release\DirectorySize.v2.csprojResolveAssemblyReference.cache
 D:\Users\US32784\Code\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\obj\Release\DirectorySize.v2.exe
 D:\Users\US32784\Code\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\obj\Release\DirectorySize.v2.pdb
+C:\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\bin\Release\DirectorySize.v2.exe.config
+C:\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\obj\Release\DirectorySize.v2.exe
+C:\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\obj\Release\DirectorySize.v2.pdb
+C:\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\bin\Release\DirectorySize.v2.exe
+C:\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\bin\Release\DirectorySize.v2.pdb
+C:\GitHub\DirectorySize\2.0 - C#\DirectorySize.v2\obj\Release\DirectorySize.v2.csprojResolveAssemblyReference.cache

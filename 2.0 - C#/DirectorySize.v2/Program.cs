@@ -27,6 +27,8 @@ namespace DirectorySize.v2
             catch (System.Exception ex) {
                 System.Console.WriteLine("General Application Error - {0}.", ex.Message.ToString());
             }
+
+            Console.Read();  
         }
     }
 }
