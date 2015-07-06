@@ -16,18 +16,10 @@ namespace DirectorySize.v2
                 return;
             }
 
-            try { 
-                DirectoryRepository repo = new DirectoryRepository(args[0].ToString());
-                repo.Traverse();
-                repo.Print();
-            }
-            catch( System.IO.DirectoryNotFoundException ex ) {
-                System.Console.WriteLine("Could not find Directory - {0}", ex.Message.ToString());
-            }
-            catch (System.Exception ex) {
-                System.Console.WriteLine("General Application Error - {0}.", ex.Message.ToString());
-            }
-
+            DirectoryRepository repo = new DirectoryRepository(args[0].ToString());
+            repo.Traverse();
+            repo.Print();
+            Console.WriteLine("Press <ENTER> to continue");
             Console.Read();  
         }
     }
