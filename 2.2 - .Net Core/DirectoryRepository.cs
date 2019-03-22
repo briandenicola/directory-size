@@ -59,7 +59,7 @@ namespace DirectorySize
                 Console.WriteLine("{0}{1}{2,10:0.00} ", 
                     directory.Path.PadRight(PADDING), 
                     directory.FileCount.ToString().PadRight(PADDING), 
-                    Convert.ToDouble(directory.DirectorySize / MB )
+                    Math.Round(((double)directory.DirectorySize / MB), 2 )
                 );
             }
             Console.WriteLine();
