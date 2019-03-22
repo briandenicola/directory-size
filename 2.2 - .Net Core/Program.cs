@@ -19,8 +19,6 @@ namespace DirectorySize
             var repo = new DirectoryRepository(args[0].ToString());
             repo.Traverse();
             repo.Print();
-            Console.WriteLine("Press <ENTER> to continue");
-            Console.Read();  
         }
     }
 }
