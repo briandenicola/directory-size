@@ -65,7 +65,8 @@ func (repo *DirectoryRepository) Traverse() {
 	for _, subdirectory := range list_of_items_in_directory {
 		if subdirectory.IsDir() {
 			number_of_subdirectories++
-			list_of_subdirectories = append(list_of_subdirectories, strings.ToLower(filepath.Join(repo._root,subdirectory.Name())))
+			list_of_subdirectories = append(list_of_subdirectories, 
+										strings.ToLower(filepath.Join(repo._root,subdirectory.Name())))
 		}
 	}	
 	
