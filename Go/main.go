@@ -27,17 +27,17 @@ func (repo *DirectoryRepository) GetDirectorySize(path string, recurse bool) (*D
 	var directory_size int64
 	var number_of_files int
 
-	files, _ := ioutil.ReadDir(path)
-	number_of_files = len(files)
+	list_of_items_in_directory, _ := ioutil.ReadDir(path)
+	number_of_files = len(list_of_items_in_directory)
 
 	var list_of_subdirectories []string
 
-	for _, file := range files {
-		if !file.IsDir() {
-			fileInfo, _ := os.Stat(filepath.Join(path,file.Name()))
+	for _, item := range list_of_items_in_directory {
+		if !item.IsDir() {
+			fileInfo, _ := os.Stat(filepath.Join(path,item.Name()))
 			directory_size += fileInfo.Size()
 		} else {
-			list_of_subdirectories = append(list_of_subdirectories, filepath.Join(path,file.Name()))
+			list_of_subdirectories = append(list_of_subdirectories, filepath.Join(path,item.Name()))
 		}
 	}
 
@@ -60,11 +60,9 @@ func (repo *DirectoryRepository) Traverse() {
 
 	list_of_items_in_directory, _ := ioutil.ReadDir(repo._root)	
 
-	number_of_subdirectories := 0
 	var list_of_subdirectories []string
 	for _, subdirectory := range list_of_items_in_directory {
 		if subdirectory.IsDir() {
-			number_of_subdirectories++
 			list_of_subdirectories = append(list_of_subdirectories, 
 				strings.ToLower(filepath.Join(repo._root,subdirectory.Name())))
 		}
