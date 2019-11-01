@@ -106,14 +106,13 @@ func NewDirectoryRepository() *DirectoryRepository {
 
 func main() {
 
-	/*if len(os.Args) != 2 {
+	if len(os.Args) != 2 {
 		fmt.Println("You must provide a directory argument at the command line.")
 	} else {
-		root := os.Args[1]*/
-		root := "C:\\tools"
+		root := os.Args[1]
 		repo := NewDirectoryRepository()
 		repo.Initialize(root)
 		repo.Traverse()
 		repo.Print()
-	//}
+	}
 }
