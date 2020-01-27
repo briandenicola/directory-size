@@ -18,6 +18,8 @@ namespace DirectorySize
         long runtime = 0L;
     
         int counter = 0;
+        long total_size = 0L;
+        long total_count = 0L;
         
         public DirectoryRepository(string path)
         {
@@ -31,7 +33,11 @@ namespace DirectorySize
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            _repository.Add(getDirectorySize(root, false));
+            var root_directory_data = getDirectorySize(root, false);
+            total_size = root_directory_data.DirectorySize;
+            total_count = root_directory_data.FileCount;
+            _repository.Add(root_directory_data);
+
             var subdirectories = Directory.EnumerateDirectories(root);
             Parallel.ForEach(
                 subdirectories,
@@ -42,6 +48,8 @@ namespace DirectorySize
                     {
                         _repository.Add(directoryInfo);
                         counter++;
+                        total_size += directoryInfo.DirectorySize;
+                        total_count += directoryInfo.FileCount;
                         ReportProgress(counter, subdirectories.Count());
                     }
                 }
@@ -54,16 +62,24 @@ namespace DirectorySize
         public void Print() 
         {
             Console.WriteLine();
-            Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), "Size (MB)".PadRight(PADDING));                
+            Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));                
             foreach (DirectoryInfo directory in _repository.OrderByDescending(o => o.DirectorySize)) {
-                Console.WriteLine("{0}{1}{2,10:0.00} ", 
+                Console.WriteLine("{0}{1,15:n0}{2}{3,10:##,###.##}", 
                     directory.Path.PadRight(PADDING), 
-                    directory.FileCount.ToString().PadRight(PADDING), 
+                    directory.FileCount, 
+                    "".PadRight(PADDING-15),
                     Math.Round(((double)directory.DirectorySize / MB), 2 )
                 );
             }
             Console.WriteLine();
-            Console.WriteLine("Total Time Taken {0} ms", runtime);
+            Console.WriteLine("{0}{1,15:n0}{2}{3,10:##,###.##} ", 
+                "Totals:".PadRight(PADDING), 
+                total_count,
+                "".PadRight(PADDING-15),
+                Math.Round((double) total_size / MB), 2 );
+            Console.WriteLine("{0}{1,15:n0}(ms) ",
+                "Total Time Taken:".PadRight(PADDING), 
+                runtime);
             Console.WriteLine();
         }
 
