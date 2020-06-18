@@ -65,7 +65,7 @@ namespace DirectorySize
             Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));                
             foreach (DirectoryInfo directory in _repository.OrderByDescending(o => o.DirectorySize)) {
                 Console.WriteLine("{0}{1,15:n0}{2}{3,10:##,###.##}", 
-                    directory.Path.PadRight(PADDING), 
+                    Truncate(directory.Path, 50).PadRight(PADDING), 
                     directory.FileCount, 
                     "".PadRight(PADDING-15),
                     Math.Round(((double)directory.DirectorySize / MB), 2 )
@@ -81,6 +81,11 @@ namespace DirectorySize
                 "Total Time Taken:".PadRight(PADDING), 
                 runtime);
             Console.WriteLine();
+        }
+
+        private string Truncate(string value, int maxChars)
+        {
+            return value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
         }
 
         private void ReportProgress(int completed, int total) {
