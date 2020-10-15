@@ -13,19 +13,21 @@ namespace DirectorySize
         const int MAXPARALLEL = 20;
         const int MAXCHAR = 50;
 
-        List<DirectoryInfo> _repository = new List<DirectoryInfo>();
-        string root = string.Empty;
-        long runtime = 0L;
-    
+        List<DirectoryStatistics> _repository = new List<DirectoryStatistics>();
+        List<DirectoryErrorInfo> _errors = new List<DirectoryErrorInfo>();
+
+        string _rootPath;
+        
         int counter = 0;
+        long runtime = 0L;
         long total_size = 0L;
         long total_count = 0L;
         
         public DirectoryRepository(string path)
         {
-            root = path;
-            if (!Directory.Exists(root)) {
-                throw new System.IO.DirectoryNotFoundException(root);
+            _rootPath = path;
+            if (!Directory.Exists(_rootPath)) {
+                throw new System.IO.DirectoryNotFoundException(_rootPath);
             }
         }
 
@@ -35,21 +37,21 @@ namespace DirectorySize
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            (total_size, total_count) = await getDirectorySize(root, false);
-            _repository.Add(new DirectoryInfo(){ Path = root, DirectorySize = total_size, FileCount = total_count});
+            (total_size, total_count) = await getDirectorySize(_rootPath, false);
+            _repository.Add(new DirectoryStatistics(){ Path = _rootPath, DirectorySize = total_size, FileCount = total_count});
 
-            int totalSubDirectories = Directory.EnumerateDirectories(root).Count();
+            int totalSubDirectories = Directory.EnumerateDirectories(_rootPath).Count();
 
             Parallel.ForEach
             (
-                Directory.EnumerateDirectories(root),
+                Directory.EnumerateDirectories(_rootPath),
                 new ParallelOptions { MaxDegreeOfParallelism = MAXPARALLEL },
                 async (subdirectory) =>  
                 {
                     (long size, long count) = await getDirectorySize(subdirectory, true);
                     lock (_repository)
                     {
-                        _repository.Add(new DirectoryInfo(){ Path = subdirectory, DirectorySize = size, FileCount = count});
+                        _repository.Add(new DirectoryStatistics(){ Path = subdirectory, DirectorySize = size, FileCount = count});
                         counter++; total_size += size; total_count += count;
                         reportProgress(counter, totalSubDirectories);
                     }
@@ -60,7 +62,7 @@ namespace DirectorySize
             runtime = watch.ElapsedMilliseconds;
         }
 
-        public void Print() 
+        public void Print(bool displayErrors) 
         {
             Console.WriteLine();
             Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));  
@@ -87,7 +89,26 @@ namespace DirectorySize
                 "{0}{1,15:n0}(ms) ",
                 "Total Time Taken:".PadRight(PADDING), 
                 runtime);
+            Console.WriteLine(
+                "{0}{1,15:n0} ",
+                "Total Errors:".PadRight(PADDING), 
+                _errors.Count()
+            );
+
             Console.WriteLine();
+
+            if(displayErrors && _errors.Count > 0)
+            {
+                Console.WriteLine("{0}{1}", "Directory".PadRight(PADDING), "Error".PadRight(PADDING));  
+                foreach( var error in _errors ) {
+                    Console.WriteLine(
+                        "{0}{1}", 
+                        Truncate(error.Path, MAXCHAR).PadRight(PADDING), 
+                        error.ErrorDescription
+                    );
+                }
+                Console.WriteLine();
+            }
         }
 
         private void reportProgress(int completed, int total) 
@@ -107,7 +128,13 @@ namespace DirectorySize
                 number_of_files = files.Count();
                 directory_size  = files.Sum( file => new FileInfo(file).Length );
             }
-            catch (System.Exception) {}
+            catch (System.Exception e) 
+            {
+                lock (_errors)
+                {
+                    _errors.Add(new DirectoryErrorInfo(){ Path = path, ErrorDescription = e.Message.ToString() });
+                }
+            }
             
             if (recurse) 
             {
@@ -119,7 +146,13 @@ namespace DirectorySize
                         directory_size += size; number_of_files += count;
                     }
                 }
-                catch (System.Exception) { }
+                catch (System.Exception e) 
+                { 
+                    lock (_errors)
+                    {
+                        _errors.Add(new DirectoryErrorInfo(){ Path = path, ErrorDescription = e.Message.ToString() });
+                    }
+                }
             }
             return (directory_size,number_of_files);
         }

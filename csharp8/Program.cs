@@ -1,20 +1,22 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DirectorySize
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main(DirectoryInfo path, bool showErrors = false)
         {
-            if (args.Length != 1) {
-                Console.WriteLine("You must provide a directory argument at the command line.");
+            if (!path.Exists) {
+                Console.WriteLine($"{path} does not exist.");
                 System.Environment.Exit(-1);  
             }
 
-            var repo = new DirectoryRepository(args[0].ToString());
+            var repo = new DirectoryRepository(path.FullName);
             await repo.Run();
-            repo.Print();
+            repo.Print(showErrors);
         }
+
     }
 }
