@@ -29,6 +29,8 @@ namespace DirectorySize
             }
         }
 
+        private string Truncate(string value, int maxChars) => value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
+
         public void Traverse() 
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -62,15 +64,18 @@ namespace DirectorySize
         public void Print() 
         {
             Console.WriteLine();
-            Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));                
+            Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));  
+
             foreach (DirectoryInfo directory in _repository.OrderByDescending(o => o.DirectorySize)) {
-                Console.WriteLine("{0}{1,15:n0}{2}{3,10:##,###.##}", 
+                Console.WriteLine(
+                    "{0}{1,15:n0}{2}{3,10:##,###.##}", 
                     Truncate(directory.Path, 50).PadRight(PADDING), 
                     directory.FileCount, 
                     "".PadRight(PADDING-15),
                     Math.Round(((double)directory.DirectorySize / MB), 2 )
                 );
             }
+
             Console.WriteLine();
             Console.WriteLine("{0}{1,15:n0}{2}{3,10:##,###.##} ", 
                 "Totals:".PadRight(PADDING), 
@@ -83,10 +88,7 @@ namespace DirectorySize
             Console.WriteLine();
         }
 
-        private string Truncate(string value, int maxChars)
-        {
-            return value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
-        }
+
 
         private void ReportProgress(int completed, int total) {
             Console.Clear();
@@ -100,13 +102,9 @@ namespace DirectorySize
             long number_of_files = 0;
 
             try {
-
                 var files = Directory.EnumerateFiles(path);
                 number_of_files = files.Count();
-
-                foreach (string file in files) {
-                    directory_size += (new FileInfo(file)).Length;
-                }
+                directory_size += files.Sum( file => new FileInfo(file).Length );
             }
             catch (System.Exception) {}
             
