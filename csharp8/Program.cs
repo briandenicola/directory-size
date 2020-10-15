@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DirectorySize
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             if (args.Length != 1) {
                 Console.WriteLine("You must provide a directory argument at the command line.");
-                return;
+                System.Environment.Exit(-1);  
             }
 
             var repo = new DirectoryRepository(args[0].ToString());
-            repo.Traverse();
+            await repo.Run();
             repo.Print();
         }
     }
