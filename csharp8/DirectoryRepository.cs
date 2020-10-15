@@ -105,7 +105,7 @@ namespace DirectorySize
             {
                 var files = Directory.EnumerateFiles(path);
                 number_of_files = files.Count();
-                directory_size += files.Sum( file => new FileInfo(file).Length );
+                directory_size  = files.Sum( file => new FileInfo(file).Length );
             }
             catch (System.Exception) {}
             
