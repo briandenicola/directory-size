@@ -6,7 +6,7 @@ namespace DirectorySize
 {
     class Program
     {
-        static async Task Main(DirectoryInfo path, bool showErrors = false)
+        static async Task Main(DirectoryInfo path, bool showErrors = false, bool quiet = false)
         {
             if (!path.Exists) {
                 Console.WriteLine($"{path} does not exist.");
@@ -15,7 +15,7 @@ namespace DirectorySize
 
             var repo = new DirectoryRepository(path.FullName);
             await repo.Run();
-            repo.Print(showErrors);
+            repo.Print(showErrors, quiet);
         }
 
     }
