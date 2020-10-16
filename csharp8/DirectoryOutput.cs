@@ -13,7 +13,7 @@ namespace DirectorySize
         static private string Truncate(string value, int maxChars) => value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
 
         static private void writeDisplayHeader() => Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));  
-        static private void writeErrorHeader() => Console.WriteLine("{0}{1}", "Directory".PadRight(PADDING), "Error".PadRight(PADDING));  
+        static private void writeErrorHeader() => Console.WriteLine("{0}{1}", "Directory".PadRight(PADDING+13), "Error".PadRight(PADDING));  
 
         static private bool pause(int currentLine, bool quiet)
         {
@@ -66,13 +66,12 @@ namespace DirectorySize
 
         static public void DisplayErrors( List<DirectoryErrorInfo> errors, bool quiet) 
         {               
-            Console.WriteLine(Environment.NewLine);
+            Console.WriteLine();
             Console.WriteLine(
                 "{0}{1,15:n0} ",
                 "Total Errors:".PadRight(PADDING), 
                 errors.Count()
             );
-            Console.WriteLine();
 
             if(errors.Count > 0)
             {
@@ -84,7 +83,7 @@ namespace DirectorySize
 
                     Console.WriteLine(
                         "{0}{1}", 
-                        Truncate(error.Path, MAXCHAR).PadRight(PADDING), 
+                        Truncate(error.Path, MAXCHAR).PadRight(PADDING+13), 
                         error.ErrorDescription
                     );
                     
