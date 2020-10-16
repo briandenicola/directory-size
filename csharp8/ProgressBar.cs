@@ -1,6 +1,7 @@
 using System;
-namespace DirectorySize{
 
+namespace DirectorySize
+{
     static class ProgressBar
     {
         public static void ClearCurrent()
