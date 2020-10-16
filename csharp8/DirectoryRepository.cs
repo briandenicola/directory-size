@@ -8,10 +8,7 @@ namespace DirectorySize
 {
     class DirectoryRepository
     {
-        const int MB = 1048576;
-        const int PADDING = 60;
         const int MAXPARALLEL = 20;
-        const int MAXCHAR = 50;
 
         List<DirectoryStatistics> _repository = new List<DirectoryStatistics>();
         List<DirectoryErrorInfo> _errors = new List<DirectoryErrorInfo>();
@@ -30,8 +27,6 @@ namespace DirectorySize
                 throw new System.IO.DirectoryNotFoundException(_rootPath);
             }
         }
-
-        private string Truncate(string value, int maxChars) => value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
 
         public async Task Run() 
         {
@@ -62,74 +57,11 @@ namespace DirectorySize
             runtime = watch.ElapsedMilliseconds;
         }
 
-        public void Print(bool displayErrors, bool quiet) 
-        {
-            int c = 0;
+        public void Print(bool showErrors, bool quiet){
+            DirectoryOutput.DisplayResults(_repository, total_count, total_size, runtime, quiet);
 
-            void Pause()
-            {
-                if( !quiet && c == Console.WindowHeight - (Console.WindowHeight/2) ) 
-                {
-                    Console.WriteLine("Press Enter to Continue");
-                    Console.ReadKey(true);
-                    c = 0;
-                }
-            }
-
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));  
-
-            foreach (var directory in _repository.OrderByDescending(o => o.DirectorySize)) 
-            {
-                Pause();
-                Console.WriteLine(
-                    "{0}{1,15:n0}{2}{3,10:##,###.##}", 
-                    Truncate(directory.Path, MAXCHAR).PadRight(PADDING), 
-                    directory.FileCount, 
-                    "".PadRight(PADDING-15),
-                    Math.Round(((double)directory.DirectorySize / MB), 2 )
-                );
-                c++;
-            }
-            Console.WriteLine();
-
-            Console.WriteLine(
-                "{0}{1,15:n0}{2}{3,10:##,###.##} ", 
-                "Totals:".PadRight(PADDING), 
-                total_count,
-                "".PadRight(PADDING-15),
-                Math.Round((double) total_size / MB), 2 );
-            
-            Console.WriteLine(
-                "{0}{1,15:n0}(ms) ",
-                "Total Time Taken:".PadRight(PADDING), 
-                runtime);
-            
-            Console.WriteLine(
-                "{0}{1,15:n0} ",
-                "Total Errors:".PadRight(PADDING), 
-                _errors.Count()
-            );
-            Console.WriteLine();
-
-            if(displayErrors && _errors.Count > 0)
-            {
-                Console.WriteLine("{0}{1}", "Directory".PadRight(PADDING), "Error".PadRight(PADDING));  
-
-                c = 0;
-                foreach( var error in _errors ) 
-                {
-                    Pause();
-                    Console.WriteLine(
-                        "{0}{1}", 
-                        Truncate(error.Path, MAXCHAR).PadRight(PADDING), 
-                        error.ErrorDescription
-                    );
-
-                    c++;
-                }
-                Console.WriteLine();
-            }
+            if(showErrors)
+                DirectoryOutput.DisplayErrors(_errors, quiet);
         }
 
         private void reportProgress(int completed, int total) 
