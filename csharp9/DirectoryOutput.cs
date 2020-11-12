@@ -7,12 +7,12 @@ namespace DirectorySize
     static class DirectoryOutput
     {
         const int MB = 1048576;
-        const int PADDING = 60;
-        const int MAXCHAR = 50;
+        const int PADDING = 50;
+        const int MAXCHAR = 45;
 
         static private string Truncate(string value, int maxChars) => value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
-        static private void   writeDisplayHeader() => Console.WriteLine("{0}{1}{2}", "Directory".PadRight(PADDING), "Number of Files".PadRight(PADDING), " Size (MB)".PadRight(PADDING));  
-        static private void   writeErrorHeader() => Console.WriteLine($"{0}{1}", "Directory".PadRight(PADDING+13), "Error".PadRight(PADDING));  
+        static private void   writeDisplayHeader() => Console.WriteLine($"{"Directory:",-PADDING} {"Number of Files:",PADDING} {"Size (MB):",PADDING}");
+        static private void   writeErrorHeader() => Console.WriteLine($"{"Directory:",-PADDING} {"Error:",PADDING}");
 
         static private bool pause(int currentLine, bool quiet)
         {
@@ -34,43 +34,19 @@ namespace DirectorySize
             {
                 if( c == 0 ) 
                     writeDisplayHeader();
-
-                Console.WriteLine(
-                    "{0}{1,15:n0}{2}{3,10:##,###.##}", 
-                    Truncate(directory.Path, MAXCHAR).PadRight(PADDING), 
-                    directory.FileCount, 
-                    "".PadRight(PADDING-15),
-                    Math.Round(((double)directory.DirectorySize / MB), 2 )
-                );
-
-                c = pause(c, quiet) ? 0 : (c+1);
-                
+                Console.WriteLine($"{(Truncate(directory.Path,MAXCHAR)), -PADDING} {directory.FileCount,PADDING:n0} {((double)directory.DirectorySize/MB),PADDING:##,###.##}" );
+                c = pause(c, quiet) ? 0 : (c+1);                
             }
-            Console.WriteLine();
 
-            Console.WriteLine(
-                "{0}{1,15:n0}{2}{3,10:##,###.##} ", 
-                "Totals:".PadRight(PADDING), 
-                count,
-                "".PadRight(PADDING-15),
-                Math.Round((double) size / MB), 2 
-            );
-            
-            Console.WriteLine(
-                "{0}{1,15:n0}(ms) ",
-                "Total Time Taken:".PadRight(PADDING), 
-                time
-            );
+            Console.WriteLine();
+            Console.WriteLine($"{"Totals:", -PADDING} {count,PADDING:n0} {((double) size / MB),PADDING:##,###.##}");
+            Console.WriteLine($"{"Total Time Taken:", -PADDING} {time,PADDING:n0}(ms)");
         }
 
         static public void DisplayErrors( List<DirectoryErrorInfo> errors, bool quiet) 
         {               
             Console.WriteLine();
-            Console.WriteLine(
-                "{0}{1,15:n0} ",
-                "Total Errors:".PadRight(PADDING), 
-                errors.Count()
-            );
+            Console.WriteLine($"{"Total Errors:", -PADDING} {errors.Count(), PADDING:n0}");
 
             if(errors.Count > 0)
             {
@@ -79,13 +55,7 @@ namespace DirectorySize
                 {
                     if( c == 0 ) 
                         writeErrorHeader();
-
-                    Console.WriteLine(
-                        "{0}{1}", 
-                        Truncate(error.Path, MAXCHAR).PadRight(PADDING+13), 
-                        error.ErrorDescription
-                    );
-                    
+                    Console.WriteLine($"{(Truncate(error.Path, MAXCHAR)), -(PADDING+44)} {error.ErrorDescription}");                  
                     c = pause(c, quiet) ? 0 : (c+1);
                 }
                 Console.WriteLine();
