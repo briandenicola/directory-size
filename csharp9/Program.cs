@@ -12,15 +12,9 @@ namespace DirectorySize
         {
             var rootCommand = new RootCommand
             {
-                new Option<DirectoryInfo>(
-                    "--path",
-                    description: "The folder path to check size of"),
-                new Option<bool>(
-                    "--quiet",
-                    description: "Quiet output"),
-                new Option<bool>(
-                    "--show-errors",
-                    description: "An option whose argument is parsed as a FileInfo")
+                new Option<DirectoryInfo>("--path",description: "The folder path to check size of"),
+                new Option<bool>("--quiet",description: "Quiet output"),
+                new Option<bool>("--show-errors", description: "An option whose argument is parsed as a FileInfo")
             };
 
             rootCommand.Description = "A console app to show the size of all subfolders under itself";

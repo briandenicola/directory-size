@@ -25,7 +25,7 @@ namespace DirectorySize
             return false;
         }
 
-        static public void DisplayResults( List<DirectoryStatistics> repo, long count, long size, long time,  bool quiet) 
+        static public void DisplayResults( List<DirectoryStatistics> repo, long count, long size, long time, int errors, bool quiet) 
         {
             Console.WriteLine(Environment.NewLine);
         
@@ -34,19 +34,19 @@ namespace DirectorySize
             {
                 if( c == 0 ) 
                     writeDisplayHeader();
-                Console.WriteLine($"{(Truncate(directory.Path,MAXCHAR)), -PADDING} {directory.FileCount,PADDING:n0} {((double)directory.DirectorySize/MB),PADDING:##,###.##}" );
+                Console.WriteLine($"{(Truncate(directory.Path,MAXCHAR)), -PADDING} {directory.FileCount,PADDING:n0} {((double)directory.DirectorySize/MB),PADDING:n2}" );
                 c = pause(c, quiet) ? 0 : (c+1);                
             }
 
             Console.WriteLine();
-            Console.WriteLine($"{"Totals:", -PADDING} {count,PADDING:n0} {((double) size / MB),PADDING:##,###.##}");
-            Console.WriteLine($"{"Total Time Taken:", -PADDING} {time,PADDING:n0}(ms)");
+            Console.WriteLine($"{"Totals:", -PADDING} {count,PADDING:n0} {((double) size / MB),PADDING:n2}");
+            Console.WriteLine($"{"Total Time Taken (ms):", -PADDING} {time,PADDING:n0}");
+            Console.WriteLine($"{"Total Errors:", -PADDING} {errors, PADDING:n0}");
         }
 
         static public void DisplayErrors( List<DirectoryErrorInfo> errors, bool quiet) 
         {               
             Console.WriteLine();
-            Console.WriteLine($"{"Total Errors:", -PADDING} {errors.Count(), PADDING:n0}");
 
             if(errors.Count > 0)
             {
