@@ -12,8 +12,8 @@ namespace DirectorySize
         {
             var rootCommand = new RootCommand
             {
-                new Option<DirectoryInfo>("--path",description: "The folder path to check size of"),
-                new Option<bool>("--quiet",description: "Quiet output"),
+                new Option<DirectoryInfo>(new [] {"--path", "-p"},description: "The folder path to check size of"),
+                new Option<bool>(new [] {"--quiet", "-q"},description: "Quiet output"),
                 new Option<bool>("--show-errors", description: "An option whose argument is parsed as a FileInfo")
             };
 
