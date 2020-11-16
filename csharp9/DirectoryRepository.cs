@@ -3,14 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace DirectorySize
 {
     class DirectoryRepository
     {
-        const int MAXPARALLEL = 20;
-
-        List<DirectoryStatistics> _repository = new List<DirectoryStatistics>();
+        ConcurrentDictionary<string,DirectoryStatistics> _repository = new ConcurrentDictionary<string, DirectoryStatistics>();
         List<DirectoryErrorInfo> _errors = new List<DirectoryErrorInfo>();
 
         string _rootPath;
@@ -33,25 +32,20 @@ namespace DirectorySize
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             (total_size, total_count) = await getDirectorySize(_rootPath, false);
-            _repository.Add(new DirectoryStatistics(){ Path = _rootPath, DirectorySize = total_size, FileCount = total_count});
-
+            _repository.TryAdd<string, DirectoryStatistics>(_rootPath, new DirectoryStatistics(){ Path = _rootPath, DirectorySize = total_size, FileCount = total_count});
+            
             int totalSubDirectories = Directory.EnumerateDirectories(_rootPath).Count();
 
-            Parallel.ForEach
-            (
-                Directory.EnumerateDirectories(_rootPath),
-                new ParallelOptions { MaxDegreeOfParallelism = MAXPARALLEL },
-                async (subdirectory) =>  
+            Parallel.ForEach( Directory.EnumerateDirectories(_rootPath), async (subdirectory) => {
+                (long size, long count) = await getDirectorySize(subdirectory, true);
+
+                _repository.TryAdd<string, DirectoryStatistics>(subdirectory, new DirectoryStatistics(){ Path = subdirectory, DirectorySize = size, FileCount = count});
+                lock (_repository)
                 {
-                    (long size, long count) = await getDirectorySize(subdirectory, true);
-                    lock (_repository)
-                    {
-                        _repository.Add(new DirectoryStatistics(){ Path = subdirectory, DirectorySize = size, FileCount = count});
-                        counter++; total_size += size; total_count += count;
-                        reportProgress(counter, totalSubDirectories);
-                    }
+                    counter++; total_size += size; total_count += count;
+                    reportProgress(counter, totalSubDirectories);
                 }
-            );
+            });
 
             watch.Stop();
             runtime = watch.ElapsedMilliseconds;
@@ -71,6 +65,8 @@ namespace DirectorySize
 
         private async Task<(long,long)> getDirectorySize(string path, bool recurse)
         { 
+            object _lock = new object();
+
             long directory_size = 0;
             long number_of_files = 0;
 
@@ -97,6 +93,14 @@ namespace DirectorySize
                         (long size, long count) = await getDirectorySize(subdirectory, true);
                         directory_size += size; number_of_files += count;
                     }
+
+                    /*
+                    Parallel.ForEach( Directory.EnumerateDirectories(path), async (subdirectory) => {
+                        (long size, long count) = await getDirectorySize(subdirectory, true);
+                        lock(_lock) {
+                            directory_size += size; number_of_files += count;
+                        }
+                    });*/
                 }
                 catch (System.Exception e) 
                 { 

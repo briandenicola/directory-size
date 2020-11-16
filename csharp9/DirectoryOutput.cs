@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace DirectorySize
 {
@@ -25,16 +26,18 @@ namespace DirectorySize
             return false;
         }
 
-        static public void DisplayResults( List<DirectoryStatistics> repo, long count, long size, long time, int errors, bool quiet) 
+        //static public void DisplayResults( List<DirectoryStatistics> repo, long count, long size, long time, int errors, bool quiet) 
+        static public void DisplayResults( ConcurrentDictionary<string,DirectoryStatistics> repo, long count, long size, long time, int errors, bool quiet) 
         {
             Console.WriteLine(Environment.NewLine);
         
             int c = 0;
-            foreach (var directory in repo.OrderByDescending(o => o.DirectorySize)) 
+            //foreach (var directory in repo.OrderByDescending(o => o.DirectorySize)) 
+            foreach (var directory in repo.OrderByDescending( o => o.Value.DirectorySize))
             {
                 if( c == 0 ) 
                     writeDisplayHeader();
-                Console.WriteLine($"{(Truncate(directory.Path,MAXCHAR)), -PADDING} {directory.FileCount,PADDING:n0} {((double)directory.DirectorySize/MB),PADDING:n2}" );
+                Console.WriteLine($"{(Truncate(directory.Value.Path,MAXCHAR)), -PADDING} {directory.Value.FileCount,PADDING:n0} {((double)directory.Value.DirectorySize/MB),PADDING:n2}" );
                 c = pause(c, quiet) ? 0 : (c+1);                
             }
 
