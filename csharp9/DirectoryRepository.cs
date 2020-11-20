@@ -65,8 +65,6 @@ namespace DirectorySize
 
         private async Task<(long,long)> getDirectorySize(string path, bool recurse)
         { 
-            object _lock = new object();
-
             long directory_size = 0;
             long number_of_files = 0;
 
@@ -75,39 +73,21 @@ namespace DirectorySize
                 var files = Directory.EnumerateFiles(path);
                 number_of_files = files.Count();
                 directory_size  = files.Sum( file => new FileInfo(file).Length );
-            }
-            catch (System.Exception e) 
-            {
-                lock (_errors)
-                {
-                    _errors.Add(new DirectoryErrorInfo(){ Path = path, ErrorDescription = e.Message.ToString() });
-                }
-            }
             
-            if (recurse) 
-            {
-                try
+                if (recurse) 
                 {
                     foreach (var subdirectory in Directory.EnumerateDirectories(path)) 
                     {
                         (long size, long count) = await getDirectorySize(subdirectory, true);
                         directory_size += size; number_of_files += count;
                     }
-
-                    /*
-                    Parallel.ForEach( Directory.EnumerateDirectories(path), async (subdirectory) => {
-                        (long size, long count) = await getDirectorySize(subdirectory, true);
-                        lock(_lock) {
-                            directory_size += size; number_of_files += count;
-                        }
-                    });*/
                 }
-                catch (System.Exception e) 
-                { 
-                    lock (_errors)
-                    {
-                        _errors.Add(new DirectoryErrorInfo(){ Path = path, ErrorDescription = e.Message.ToString() });
-                    }
+            }
+            catch (System.Exception e) 
+            { 
+                lock (_errors)
+                {
+                    _errors.Add(new DirectoryErrorInfo(){ Path = path, ErrorDescription = e.Message.ToString() });
                 }
             }
             return (directory_size,number_of_files);
