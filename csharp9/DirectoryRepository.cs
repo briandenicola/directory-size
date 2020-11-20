@@ -27,19 +27,22 @@ namespace DirectorySize
             }
         }
 
-        public async Task Run() 
+        public void Run() 
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            (total_size, total_count) = await getDirectorySize(_rootPath, false);
-            _repository.TryAdd<string, DirectoryStatistics>(_rootPath, new DirectoryStatistics(){ Path = _rootPath, DirectorySize = total_size, FileCount = total_count});
-            
             int totalSubDirectories = Directory.EnumerateDirectories(_rootPath).Count();
+            (total_size, total_count) = getCurrentDirectoryFileSize(_rootPath);
 
+            _repository.TryAdd<string, DirectoryStatistics>(_rootPath, 
+                new DirectoryStatistics(){ Path = _rootPath, DirectorySize = total_size, FileCount = total_count});
+            
             Parallel.ForEach( Directory.EnumerateDirectories(_rootPath), async (subdirectory) => {
-                (long size, long count) = await getDirectorySize(subdirectory, true);
+                (long size, long count) = await getDirectorySize(subdirectory);
 
-                _repository.TryAdd<string, DirectoryStatistics>(subdirectory, new DirectoryStatistics(){ Path = subdirectory, DirectorySize = size, FileCount = count});
+                _repository.TryAdd<string, DirectoryStatistics>(subdirectory, 
+                    new DirectoryStatistics(){ Path = subdirectory, DirectorySize = size, FileCount = count});
+
                 lock (_repository)
                 {
                     counter++; total_size += size; total_count += count;
@@ -63,24 +66,25 @@ namespace DirectorySize
             ProgressBar.Report(total, ((double)completed / (double)total) * 100);
         }
 
-        private async Task<(long,long)> getDirectorySize(string path, bool recurse)
+        private (long,long) getCurrentDirectoryFileSize(string path)
+        {
+            var files = Directory.EnumerateFiles(path);
+            return (files.Count(), files.Sum( file => new FileInfo(file).Length ));
+        }
+
+        private async Task<(long,long)> getDirectorySize(string path)
         { 
             long directory_size = 0;
             long number_of_files = 0;
 
             try 
             {
-                var files = Directory.EnumerateFiles(path);
-                number_of_files = files.Count();
-                directory_size  = files.Sum( file => new FileInfo(file).Length );
-            
-                if (recurse) 
+                (number_of_files,directory_size) = getCurrentDirectoryFileSize(path);
+                
+                foreach (var subdirectory in Directory.EnumerateDirectories(path)) 
                 {
-                    foreach (var subdirectory in Directory.EnumerateDirectories(path)) 
-                    {
-                        (long size, long count) = await getDirectorySize(subdirectory, true);
-                        directory_size += size; number_of_files += count;
-                    }
+                    (long size, long count) = await getDirectorySize(subdirectory);
+                    directory_size += size; number_of_files += count;
                 }
             }
             catch (System.Exception e) 

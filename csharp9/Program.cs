@@ -21,10 +21,10 @@ namespace DirectorySize
             };
 
             rootCommand.Description = "A console app to show the size of all subfolders under itself";
-            rootCommand.Handler = CommandHandler.Create<DirectoryInfo, bool, bool>(async (path, quiet, showErrors) =>
+            rootCommand.Handler = CommandHandler.Create<DirectoryInfo, bool, bool>( (path, quiet, showErrors) =>
             {   
                 var repo = new DirectoryRepository(path.FullName);
-                await repo.Run();
+                repo.Run();
                 repo.Print(showErrors, quiet);
             });
 
