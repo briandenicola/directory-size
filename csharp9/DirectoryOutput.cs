@@ -26,13 +26,11 @@ namespace DirectorySize
             return false;
         }
 
-        //static public void DisplayResults( List<DirectoryStatistics> repo, long count, long size, long time, int errors, bool quiet) 
         static public void DisplayResults( ConcurrentDictionary<string,DirectoryStatistics> repo, long count, long size, long time, int errors, bool quiet) 
         {
             Console.WriteLine(Environment.NewLine);
         
             int c = 0;
-            //foreach (var directory in repo.OrderByDescending(o => o.DirectorySize)) 
             foreach (var directory in repo.OrderByDescending( o => o.Value.DirectorySize))
             {
                 if( c == 0 ) 
