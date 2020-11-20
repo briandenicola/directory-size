@@ -10,6 +10,9 @@ namespace DirectorySize
     {
         static int Main(string[] args) 
         {
+            if(args.Length == 0 ) 
+                args = new string[1] { "-h" };
+
             var rootCommand = new RootCommand
             {
                 new Option<DirectoryInfo>(new [] {"--path", "-p"},description: "The folder path to check size of"),
