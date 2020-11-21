@@ -34,15 +34,13 @@ namespace DirectorySize
             int totalSubDirectories = Directory.EnumerateDirectories(_rootPath).Count();
             (total_size, total_count) = getCurrentDirectoryFileSize(_rootPath);
 
-            _repository.TryAdd<string, DirectoryStatistics>(_rootPath, 
-                new DirectoryStatistics(){ Path = _rootPath, DirectorySize = total_size, FileCount = total_count});
-            
+            _repository.TryAdd<string, DirectoryStatistics>(_rootPath, new( _rootPath, total_size, total_count ));
+                        
             Parallel.ForEach( Directory.EnumerateDirectories(_rootPath), async (subdirectory) => {
+                
                 (long size, long count) = await getDirectorySize(subdirectory);
-
-                _repository.TryAdd<string, DirectoryStatistics>(subdirectory, 
-                    new DirectoryStatistics(){ Path = subdirectory, DirectorySize = size, FileCount = count});
-
+                _repository.TryAdd<string, DirectoryStatistics>(subdirectory,new( subdirectory, size, count ));
+                
                 lock (_repository)
                 {
                     counter++; total_size += size; total_count += count;

@@ -13,7 +13,7 @@ namespace DirectorySize
 
         static private string Truncate(string value, int maxChars) => value.Length <= maxChars ? value : "..." + value.Substring((value.Length-maxChars), maxChars);
         static private void   writeDisplayHeader() => Console.WriteLine($"{"Directory:",-PADDING} {"Number of Files:",PADDING} {"Size (MB):",PADDING}");
-        static private void   writeErrorHeader() => Console.WriteLine($"{"Directory:",-PADDING} {"Error:",PADDING}");
+        static private void   writeErrorHeader()   => Console.WriteLine($"{"Directory:",-PADDING} {"Error:",PADDING}");
 
         static private bool pause(int currentLine, bool quiet)
         {
@@ -47,20 +47,17 @@ namespace DirectorySize
 
         static public void DisplayErrors( List<DirectoryErrorInfo> errors, bool quiet) 
         {               
-            Console.WriteLine();
+            Console.WriteLine(Environment.NewLine);
 
-            if(errors.Count > 0)
+            int c = 0;
+            foreach( var error in errors ) 
             {
-                int c = 0;
-                foreach( var error in errors ) 
-                {
-                    if( c == 0 ) 
-                        writeErrorHeader();
-                    Console.WriteLine($"{(Truncate(error.Path, MAXCHAR)), -(PADDING+44)} {error.ErrorDescription}");                  
-                    c = pause(c, quiet) ? 0 : (c+1);
-                }
-                Console.WriteLine();
+                if( c == 0 ) 
+                    writeErrorHeader();
+                Console.WriteLine($"{(Truncate(error.Path, MAXCHAR)), -(PADDING+44)} {error.ErrorDescription}");                     
+                c = pause(c, quiet) ? 0 : (c+1);
             }
+            Console.WriteLine();
         }
 
     }
