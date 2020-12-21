@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"github.com/briandenicola/directory-size/cmd"
+	"os"
 )
 
 func main() {
-	var rootPath string 
-	
+	var rootPath string
+
 	flag.StringVar(&rootPath, "path", "", "The folder path to check size of")
 	flag.Parse()
 
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	repo := cmd.NewDirectoryRepository()
-	if err:= repo.Initialize(rootPath); err != nil { 
+	if err := repo.Initialize(rootPath); err != nil {
 		fmt.Fprintf(os.Stderr, "Could not open %s or path does not exist\n", rootPath)
 		os.Exit(3)
 	}
