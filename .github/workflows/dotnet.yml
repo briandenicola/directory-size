@@ -38,5 +38,5 @@ jobs:
       uses: fnkr/github-action-ghr@v1
       if: startsWith(github.ref, 'refs/tags/')
       env:
-        GHR_PATH: directory-size/directory-size/csharp10/directorysize.tar.gz
+        GHR_PATH: directory-size/csharp10/directorysize.tar.gz
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
