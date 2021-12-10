@@ -1,8 +1,9 @@
 name: Build and Publish DirectorySize
 
 on:
+  push:
   workflow_dispatch:
-  
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
