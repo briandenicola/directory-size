@@ -25,3 +25,10 @@ jobs:
         
     - name: Build and Publish ${{ matrix.runtime }} runtime
       run: dotnet publish -c Release -r ${{ matrix.runtime }} --self-contained --nologo -o publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+
+    - name: Release
+      uses: fnkr/github-action-ghr@v1
+      env:
+        GHR_COMPRESS: xz
+        GHR_PATH: publish
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }
