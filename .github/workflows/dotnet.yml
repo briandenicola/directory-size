@@ -30,13 +30,25 @@ jobs:
     - name: Compress binary
       run: |
         tar czvf directorysize.tar.gz publish/DirectorySize*
-        ls -alh
-        ls -alh directorysize.tar.gz 
-        pwd
-
-    - name: Release
-      uses: fnkr/github-action-ghr@v1
-      if: startsWith(github.ref, 'refs/tags/')
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
-        GHR_PATH: csharp10/directorysize.tar.gz
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: 3.5.8 #${{ github.ref }}
+        release_name: Release 3.5.8 #${{ github.ref }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./directorysize.tar.gz
+        asset_name: directorysize.tar.gz
+          asset_content_type: application/tar
