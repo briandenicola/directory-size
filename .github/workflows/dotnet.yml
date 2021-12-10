@@ -26,11 +26,14 @@ jobs:
         
     - name: Build and Publish ${{ matrix.runtime }} runtime
       run: dotnet publish -c Release -r ${{ matrix.runtime }} --self-contained --nologo -o publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+  
+    - name: Compress binary
+      run: |
+        tar czvf directorysize.tar.gz publish/DirectorySize 
 
     - name: Release
       uses: fnkr/github-action-ghr@v1
       if: startsWith(github.ref, 'refs/tags/')
       env:
-        GHR_COMPRESS: xz
-        GHR_PATH: publish/DirectorySize
+        GHR_PATH: directorysize.tar.gz
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
