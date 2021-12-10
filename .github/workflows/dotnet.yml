@@ -30,6 +30,9 @@ jobs:
     - name: Compress binary
       run: |
         tar czvf directorysize.tar.gz publish/DirectorySize*
+        ls -alh
+        ls -alh directorysize.tar.gz 
+        pwd
 
     - name: Release
       uses: fnkr/github-action-ghr@v1
