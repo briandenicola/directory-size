@@ -57,6 +57,4 @@ jobs:
     - name: Compress binary
       run: |
         #tar czvf directorysize.tar.gz publish/DirectorySize*
-        echo ${{fromJson(needs.create_tag.outputs.upload_url)}}
-            
-
+        echo "${{ needs.create_tag.outputs.upload_url }}"
