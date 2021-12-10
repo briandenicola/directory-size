@@ -66,5 +66,5 @@ jobs:
       with:
         upload_url: ${{ needs.create_tag.outputs.upload_url }}
         asset_path: ./csharp10/directorysize-${{ matrix.runtime }}.tar.gz
-        asset_name: directorysize.tar.gz
+        asset_name: directorysize-${{ matrix.runtime }}.tar.gz
         asset_content_type: application/tar
