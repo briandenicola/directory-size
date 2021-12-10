@@ -1,0 +1,30 @@
+name: Build and Publish DirectorySize
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: './csharp10'
+      
+    strategy:
+      matrix:
+        runtime: [win10-x64, osx.11.0-arm64, linux-x64]
+        
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: Build and Publish ${{ matrix.runtime }} runtime
+      run: dotnet publish -c Release -r ${{ matrix.runtime }} --self-contained --nologo -o publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+      with:
+        languages: ${{ matrix.runtime }}
+        
