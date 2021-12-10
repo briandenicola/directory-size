@@ -30,6 +30,7 @@ jobs:
     - name: Compress binary
       run: |
         ls -lah
+        ls -alh publish/
         #tar czvf directorysize.tar.gz publish/DirectorySize 
 
     - name: Release
