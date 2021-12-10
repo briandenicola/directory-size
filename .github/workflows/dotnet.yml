@@ -25,6 +25,3 @@ jobs:
         
     - name: Build and Publish ${{ matrix.runtime }} runtime
       run: dotnet publish -c Release -r ${{ matrix.runtime }} --self-contained --nologo -o publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
-      with:
-        languages: ${{ matrix.runtime }}
-        
