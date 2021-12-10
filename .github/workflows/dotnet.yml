@@ -31,4 +31,4 @@ jobs:
       env:
         GHR_COMPRESS: xz
         GHR_PATH: publish
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
