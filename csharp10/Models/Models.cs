@@ -15,6 +15,6 @@ public record DirectoryStatistics
 
 public record DirectoryErrorInfo
 {
-    public string Path { get; init; }
-    public string ErrorDescription { get; init; }
+    public string? Path { get; init; }
+    public string? ErrorDescription { get; init; }
 }
