@@ -7,4 +7,5 @@ global using System.Collections.Concurrent;
 global using System.CommandLine;
 global using System.CommandLine.Invocation;
 
+global using Spectre.Console;
 global using DirectorySize;

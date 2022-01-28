@@ -5,7 +5,6 @@ class DirectoryRepository
     List<DirectoryErrorInfo> _errors = new List<DirectoryErrorInfo>();
 
     string _rootPath;
-    
     int counter = 0;
     long runtime = 0L;
     long total_size = 0L;
@@ -24,13 +23,12 @@ class DirectoryRepository
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
         int totalSubDirectories = Directory.EnumerateDirectories(_rootPath).Count();
-        (total_size, total_count) = getCurrentDirectoryFileSize(_rootPath);
-
+        (total_count, total_size) = getCurrentDirectoryFileSize(_rootPath);
         _repository.TryAdd<string, DirectoryStatistics>(_rootPath, new( _rootPath, total_size, total_count ));
                     
         Parallel.ForEach( Directory.EnumerateDirectories(_rootPath), async (subdirectory) => {
             
-            (long size, long count) = await getDirectorySize(subdirectory);
+            (long count, long size) = await getDirectorySize(subdirectory);
             _repository.TryAdd<string, DirectoryStatistics>(subdirectory,new( subdirectory, size, count ));
             
             lock (_repository)
@@ -44,11 +42,9 @@ class DirectoryRepository
         runtime = watch.ElapsedMilliseconds;
     }
 
-    public void Print(bool showErrors, bool quiet){
-        DirectoryOutput.DisplayResults(_repository, total_count, total_size, runtime, _errors.Count(), quiet);
-
-        if(showErrors)
-            DirectoryOutput.DisplayErrors(_errors, quiet);
+    public void Print(){
+        var display = new DirectoryOutput();
+        display.DisplayResults(_repository, total_count, total_size, runtime, _errors.Count);
     }
 
     private void reportProgress(int completed, int total) 
@@ -69,12 +65,12 @@ class DirectoryRepository
 
         try 
         {
-            (number_of_files,directory_size) = getCurrentDirectoryFileSize(path);
+            (number_of_files, directory_size) = getCurrentDirectoryFileSize(path);
             
             foreach (var subdirectory in Directory.EnumerateDirectories(path)) 
             {
-                (long size, long count) = await getDirectorySize(subdirectory);
-                directory_size += size; number_of_files += count;
+                (long count, long size) = await getDirectorySize(subdirectory);
+                number_of_files += count; directory_size += size; 
             }
         }
         catch (System.Exception e) 
@@ -84,6 +80,7 @@ class DirectoryRepository
                 _errors.Add(new DirectoryErrorInfo(){ Path = path, ErrorDescription = e.Message.ToString() });
             }
         }
-        return (directory_size,number_of_files);
+        
+        return (number_of_files, directory_size);
     }
 }

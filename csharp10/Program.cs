@@ -2,19 +2,22 @@
 if(args.Length == 0 ) 
     args = new string[1] { "-h" };
 
+
+var directoryOption = new Option<DirectoryInfo>(
+        new [] {"--path", "-p"},
+        description: "The folder path to check size of");
+
 var rootCommand = new RootCommand
 {
-    new Option<DirectoryInfo>(new [] {"--path", "-p"},description: "The folder path to check size of"),
-    new Option<bool>(new [] {"--quiet", "-q"},description: "Quiet output"),
-    new Option<bool>("--show-errors", description: "An option whose argument is parsed as a FileInfo")
+    directoryOption
 };
 
-rootCommand.Description = "A console app to show the size of all subfolders under itself";
-rootCommand.Handler = CommandHandler.Create<DirectoryInfo, bool, bool>( (path, quiet, showErrors) =>
+rootCommand.Description = "A demo app to show the size of all subfolders under a directory";
+rootCommand.SetHandler( (DirectoryInfo path) =>
 {   
     var repo = new DirectoryRepository(path.FullName);
     repo.Run();
-    repo.Print(showErrors, quiet);
-});
+    repo.Print();
+}, directoryOption);
 
 return rootCommand.InvokeAsync(args).Result;
