@@ -4,7 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
-    <VersionSuffix>3.5.$([System.DateTime]::UtcNow.ToString(mmff))</VersionSuffix>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <VersionSuffix>10.0.$([System.DateTime]::UtcNow.ToString(mmff))</VersionSuffix>
     <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
   </PropertyGroup>
 

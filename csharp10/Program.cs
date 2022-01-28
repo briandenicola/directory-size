@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using DirectorySize;
-
+﻿
 if(args.Length == 0 ) 
     args = new string[1] { "-h" };
 
