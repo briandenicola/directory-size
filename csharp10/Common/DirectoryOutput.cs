@@ -6,10 +6,10 @@ public class DirectoryOutput
     TableColumn pathColumn= new TableColumn("Path");
     TableColumn countColumn = new TableColumn("Files");
     TableColumn sizeColumn = new TableColumn("Size (MB)");
+
     public DirectoryOutput() 
     {
         output.Border(TableBorder.DoubleEdge);
-        //output.Border(TableBorder.Rounded);
         output.Centered();
         output.Width(System.Console.WindowWidth);
 
@@ -21,7 +21,7 @@ public class DirectoryOutput
     private static string ToNumberFormat(long val) => string.Format("{0:#,0}", val);
     private static string ToMB(long val) => string.Format("{0:#,0.00}", (double) Math.Round((double) val / MB, 2));
     
-    public void DisplayResults( ConcurrentDictionary<string,DirectoryStatistics> repo, long count, long size, long time, int errors) 
+    public void DisplayResults( ConcurrentDictionary<string,DirectoryStatistics> repo, long size, long count, long time, int errors) 
     {   
         System.Console.WriteLine();
 
