@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <VersionSuffix>12.0.$([System.DateTime]::UtcNow.ToString(mmff))</VersionSuffix>
+    <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <PublishAot>true</PublishAot>
+    <StripSymbols>true</StripSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="Spectre.Console" Version="0.45.1-preview.0.28" />
+  </ItemGroup>
+
+</Project>
