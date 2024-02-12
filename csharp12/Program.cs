@@ -1,11 +1,11 @@
 ﻿
 if(args.Length == 0 ) 
-    args = new string[1] { "-h" };
-
+    args = ["-h"];
 
 var directoryOption = new Option<DirectoryInfo>(
-        new [] {"--path", "-p"},
-        description: "The folder path to check size of");
+    new [] {"--path", "-p"},
+    description: "The folder path to check size of"
+);
 
 var rootCommand = new RootCommand
 {

@@ -4,7 +4,7 @@ class DirectoryRepository
     ConcurrentDictionary<string,DirectoryStatistics> _repository = new ConcurrentDictionary<string, DirectoryStatistics>();
     List<DirectoryErrorInfo> _errors = new List<DirectoryErrorInfo>();
 
-    string _rootPath;
+    readonly string _rootPath;
     int counter = 0;
     long runtime = 0L;
     (long total_size, long total_files) directoryStatistics = (0L, 0L);
@@ -47,7 +47,7 @@ class DirectoryRepository
 
     public void Print(){
         var display = new DirectoryOutput();
-        display.DisplayResults(_repository, directoryStatistics.total_size, directoryStatistics.total_files, runtime, _errors.Count);
+        display.DisplayResults(_repository, directoryStatistics.total_size, directoryStatistics.total_files, runtime); //, _errors.Count);
     }
 
     private void reportProgress(int completed, int total) 
@@ -71,9 +71,9 @@ class DirectoryRepository
             
             foreach (var subdirectory in Directory.EnumerateDirectories(path)) 
             {
-                (long size, long count) stats = await getDirectorySize(subdirectory);
-                currentDirectoryStatistics.number_of_files += stats.count; 
-                currentDirectoryStatistics.directory_size  += stats.size; 
+                (long size, long count) = await getDirectorySize(subdirectory);
+                currentDirectoryStatistics.number_of_files += count; 
+                currentDirectoryStatistics.directory_size  += size; 
             }
         }
         catch (System.Exception e) 
