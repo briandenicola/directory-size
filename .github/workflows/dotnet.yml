@@ -67,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create_tag.outputs.upload_url }}
-        asset_path: ./csharp12/directorysize-${{ matrix.runtime }}.tar.gz
+        asset_path: ./csharp13/directorysize-${{ matrix.runtime }}.tar.gz
         asset_name: directorysize-${{ matrix.runtime }}.tar.gz
         asset_content_type: application/tar
 
@@ -76,7 +76,7 @@ jobs:
       
     defaults:
       run:
-        working-directory: './csharp12'
+        working-directory: './csharp13'
       
     strategy:
       matrix:
@@ -107,6 +107,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create_tag.outputs.upload_url }}
-        asset_path: ./csharp12/directorysize-${{ matrix.runtime }}.tar.gz
+        asset_path: ./csharp13/directorysize-${{ matrix.runtime }}.tar.gz
         asset_name: directorysize-${{ matrix.runtime }}.tar.gz
         asset_content_type: application/tar
