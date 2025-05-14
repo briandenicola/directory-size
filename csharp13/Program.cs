@@ -1,24 +1,30 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 
-if (args.Length == 0)
-    args = new[] { "-h" };
-
 var directoryOption = new Option<DirectoryInfo>(
-    new[] { "--path", "-p" },
-    description: "The folder path to check size of"
-);
+    aliases: new[] { "--path", "-p" },
+    description: "The folder path to check the size of"
+)
+{
+    IsRequired = true
+};
 
-var rootCommand = new RootCommand("A demo app to show the size of all subfolders under a directory")
+var rootCommand = new RootCommand("A demo app to show the size of all sub-folders under a directory")
 {
     directoryOption
 };
 
-rootCommand.SetHandler((DirectoryInfo path) =>
+rootCommand.SetHandler((DirectoryInfo? path) =>
 {
+    if (path is null || !path.Exists)
+    {
+        Console.Error.WriteLine("Please provide a valid directory path.");
+        return;
+    }
+
     var repo = new DirectoryRepository(path.FullName);
     repo.Run();
     repo.Print();
 }, directoryOption);
 
-await rootCommand.InvokeAsync(args);
+return await rootCommand.InvokeAsync(args.Length == 0 ? new[] { "--help" } : args);

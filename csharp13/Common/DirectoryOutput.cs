@@ -1,11 +1,12 @@
 namespace DirectorySize;
+
 public class DirectoryOutput
 {
     const double MB = 1048576.0;
-    readonly Table output = new();
-    readonly TableColumn pathColumn= new("Path");
-    readonly TableColumn countColumn = new("Files");
-    readonly TableColumn sizeColumn = new("Size (MB)");
+    readonly Table       output         = new();
+    readonly TableColumn pathColumn     = new("Path");
+    readonly TableColumn countColumn    = new("Files");
+    readonly TableColumn sizeColumn     = new("Size (MB)");
 
     public DirectoryOutput() 
     {
