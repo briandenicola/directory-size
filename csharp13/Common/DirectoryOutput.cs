@@ -32,7 +32,6 @@ public class DirectoryOutput
         table.Border(TableBorder.DoubleEdge);
         table.Centered();
         table.Collapse();
-        table.
         table.Width(Console.WindowWidth);
 
         table.AddColumn(pathColumn);
