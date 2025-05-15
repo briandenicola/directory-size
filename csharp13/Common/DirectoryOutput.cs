@@ -31,6 +31,8 @@ public class DirectoryOutput
 
         table.Border(TableBorder.DoubleEdge);
         table.Centered();
+        table.Collapse();
+        table.
         table.Width(Console.WindowWidth);
 
         table.AddColumn(pathColumn);
@@ -47,10 +49,9 @@ public class DirectoryOutput
         }
 
         pathColumn.Footer(new Text("Totals:"));
-        countColumn.Footer(new Text($"{ToNumberFormat(stats.Subdirectories.Sum(s => s.FileCount))}"));
-        sizeColumn.Footer(new Text($"{ToMB(stats.Subdirectories.Sum(s => s.DirectorySize))}"));
+        countColumn.Footer(new Markup($"[bold]{ToNumberFormat(stats.Subdirectories.Sum(s => s.FileCount))}[/]"));
+        sizeColumn.Footer(new Markup($"[bold]{ToMB(stats.Subdirectories.Sum(s => s.DirectorySize))}[/]"));
         
-
         return table;        
     }
 
@@ -87,7 +88,7 @@ public class DirectoryOutput
             var subs = current.Subdirectories.OrderByDescending(d => d.DirectorySize).ToList();
             foreach (var s in subs)
             {
-                var label = $"{EscapeMarkup(Path.GetFileName(s.Path)),50} | {s.FileCount,6} files |";
+                var label = $"{EscapeMarkup(Path.GetFileName(s.Path)),-50} | {s.FileCount,6} files |";
                 choices.Add(new MenuChoice(s.Path, label));
             }
 
