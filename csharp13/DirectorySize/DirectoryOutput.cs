@@ -6,11 +6,7 @@ public class DirectoryOutput
     private const string CountTitle     = "Count";
     private const string SizeTitle      = "Size";
 
-    const double MB = 1048576.0;
-    
     public DirectoryOutput(){}    
-    private static string ToNumberFormat(long val) => string.Format("{0:#,0}", val);
-    private static string ToMB(long val) => string.Format("{0:#,0.00}", (double) Math.Round((double) val / MB, 2));
 
     public void DisplayTable(DirectoryStatistics stats)
     {
@@ -32,7 +28,7 @@ public class DirectoryOutput
             foreach (var s in sub_directories)
             {
                 var label = $"""
-                    {Utils.EscapeMarkup(Path.GetFileName(s.Path)),-50} | {ToNumberFormat(s.FileCount),6} |  {ToMB(s.DirectorySize),6}
+                    {Utils.EscapeMarkup(Path.GetFileName(s.Path)),-50} | {Utils.ToNumberFormat(s.FileCount),6} |  {Utils.ToMB(s.DirectorySize),6}
                     """;
                 menu.Add(new MenuChoice(s.Path, label));
             }
@@ -47,13 +43,10 @@ public class DirectoryOutput
 
             var selection = AnsiConsole.Prompt(prompt);
 
-            if (ReferenceEquals(selection, MenuChoice.Exit))
+            if (selection == MenuChoice.Exit)
                 break;
-
-            if (ReferenceEquals(selection, MenuChoice.Up)) 
-            {
+            else if (selection == MenuChoice.Up) 
                 stack.Pop();
-            }
             else 
             {
                 var selected_directory = sub_directories.FirstOrDefault(s => string.Equals(s.Path, selection.Path, StringComparison.OrdinalIgnoreCase));
