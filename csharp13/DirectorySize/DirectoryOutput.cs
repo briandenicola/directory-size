@@ -50,13 +50,13 @@ public class DirectoryOutput
             if (ReferenceEquals(selection, MenuChoice.Exit))
                 break;
 
-            if (ReferenceEquals(selection, MenuChoice.Up)) {
+            if (ReferenceEquals(selection, MenuChoice.Up)) 
+            {
                 stack.Pop();
             }
-            else {
-                var selected_directory = sub_directories.FirstOrDefault(s => string.Equals(s.Path, 
-                                                                                           selection.Path, 
-                                                                                           StringComparison.OrdinalIgnoreCase));
+            else 
+            {
+                var selected_directory = sub_directories.FirstOrDefault(s => string.Equals(s.Path, selection.Path, StringComparison.OrdinalIgnoreCase));
                 if (selected_directory != null)
                     stack.Push(selected_directory);
             }

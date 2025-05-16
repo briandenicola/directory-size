@@ -70,7 +70,7 @@ class DirectoryRepository
             {
                 var stats = await GetDirectorySize(subdirectory);
                 current_directory_stats.FileCount += stats.FileCount; 
-                current_directory_stats.DirectorySize  += stats.DirectorySize;
+                current_directory_stats.DirectorySize += stats.DirectorySize;
                 current_directory_stats.Subdirectories.Add(stats); 
             }
         }
