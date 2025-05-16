@@ -23,8 +23,8 @@ rootCommand.SetHandler((DirectoryInfo? path) =>
     }
 
     var repo = new DirectoryRepository(path.FullName);
-    repo.Run();
-    repo.Print();
+    repo.Analyze();
+    repo.Display();
 }, directoryOption);
 
 return await rootCommand.InvokeAsync(args.Length == 0 ? new[] { "--help" } : args);
