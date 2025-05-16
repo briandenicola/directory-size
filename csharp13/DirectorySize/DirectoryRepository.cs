@@ -21,7 +21,7 @@ class DirectoryRepository
             ? new DirectoryStatistics(path, files.Sum(file => new FileInfo(file).Length), files.Count())
             : new DirectoryStatistics(path, 0L, 0L);
 
-    public void Display() => new DirectoryOutput().NavigateInteractive(total_directory_stats); 
+    public void Display() => new DirectoryOutput().DisplayTable(total_directory_stats); 
 
     public DirectoryRepository(string rootPath)
     {
