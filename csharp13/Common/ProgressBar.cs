@@ -1,5 +1,6 @@
 namespace DirectorySize;
-static class ProgressBar
+
+public static class ProgressBar
 {
     public static void ClearCurrent()
     {
@@ -8,9 +9,9 @@ static class ProgressBar
         Console.SetCursorPosition(0, Console.CursorTop - 1);
     }
     
-    public static void Report( int total, double percent )
+    public static void Report(int total, double percent)
     {
-        Console.WriteLine("Folders to Process: {0}. Completed: {1}%", total, Math.Round(percent,0));
+        Console.WriteLine("Folders to Process: {0}. Completed: {1}%", total, Math.Round(percent, 0));
         ClearCurrent();
     }
 }
