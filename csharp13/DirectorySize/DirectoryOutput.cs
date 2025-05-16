@@ -28,7 +28,7 @@ public class DirectoryOutput
             foreach (var s in sub_directories)
             {
                 var label = $"""
-                    {Utils.EscapeMarkup(Path.GetFileName(s.Path)),-50} | {Utils.ToNumberFormat(s.FileCount),6} |  {Utils.ToMB(s.DirectorySize),6}
+                    {Utils.EscapeMarkup(Utils.TrimPath(s.Path)),-50} | {Utils.ToNumberFormat(s.FileCount),6} |  {Utils.ToMB(s.DirectorySize),6}
                     """;
                 menu.Add(new MenuChoice(s.Path, label));
             }
