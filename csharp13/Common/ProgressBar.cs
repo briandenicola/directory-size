@@ -1,4 +1,4 @@
-namespace DirectorySize;
+namespace DirectorySize.Common;
 
 public static class ProgressBar
 {

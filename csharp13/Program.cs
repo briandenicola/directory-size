@@ -1,20 +1,17 @@
-﻿using System.CommandLine;
-using System.CommandLine.Invocation;
-
-var directoryOption = new Option<DirectoryInfo>(
-    aliases: new[] { "--path", "-p" },
+﻿var directoryOption = new Option<DirectoryInfo>(
+    aliases: ["--path", "-p"],
     description: "The folder path to check the size of"
 )
 {
     IsRequired = true
 };
 
-var rootCommand = new RootCommand("A demo app to show the size of all sub-folders under a directory")
+RootCommand rootCommand = new("A demo app to show the size of all sub-folders under a directory")
 {
     directoryOption
 };
 
-rootCommand.SetHandler((DirectoryInfo? path) =>
+rootCommand.SetHandler(path =>
 {
     if (path is null || !path.Exists)
     {
@@ -27,4 +24,4 @@ rootCommand.SetHandler((DirectoryInfo? path) =>
     repo.Display();
 }, directoryOption);
 
-return await rootCommand.InvokeAsync(args.Length == 0 ? new[] { "--help" } : args);
+return await rootCommand.InvokeAsync(args.Length == 0 ? ["--help"] : args);

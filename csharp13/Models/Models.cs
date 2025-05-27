@@ -1,4 +1,4 @@
-﻿namespace DirectorySize;
+﻿namespace DirectorySize.Models;
 
 public record DirectoryStatistics
 {

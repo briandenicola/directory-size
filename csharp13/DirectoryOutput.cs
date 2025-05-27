@@ -1,5 +1,8 @@
 namespace DirectorySize;
 
+using DirectorySize.Common;
+using DirectorySize.Models;
+
 public class DirectoryOutput
 {
     private const string DirectoryTitle = "Directory";
