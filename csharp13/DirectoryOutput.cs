@@ -19,7 +19,7 @@ public class DirectoryOutput
         while (stack.Count > 0)
         {
             var current = stack.Peek();
-            var menu = new List<MenuChoice>();
+            List<MenuChoice> menu = []; //new List<MenuChoice>();
 
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine($"[bold yellow]Directory:[/] [blue]{Utils.EscapeMarkup(current.Path)}[/]\n");

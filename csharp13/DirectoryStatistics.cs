@@ -20,7 +20,7 @@ class DirectoryRepository
     private static void ReportProgress(int completed, int total) =>
         ProgressBar.Report(total, ComputePercentage(completed, total));
 
-    private DirectoryStatistics GetCurrentDirectoryFileSize(string path) =>
+    private static DirectoryStatistics GetCurrentDirectoryFileSize(string path) =>
         Directory.EnumerateFiles(path) is var files
             ? new DirectoryStatistics(path, files.Sum(file => new FileInfo(file).Length), files.Count())
             : new DirectoryStatistics(path, 0L, 0L);
@@ -33,7 +33,7 @@ class DirectoryRepository
     {
         _rootPath = rootPath;
         if (!Directory.Exists(_rootPath))
-            throw new System.IO.DirectoryNotFoundException(_rootPath);
+            throw new DirectoryNotFoundException(_rootPath);
     }
 
     public void Analyze()
@@ -45,7 +45,8 @@ class DirectoryRepository
 
         Parallel.ForEach(
             Directory.EnumerateDirectories(_rootPath),
-            async (subdirectory) =>
+             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+            async (subdirectory, token) =>
             {
                 var sub_directory_stats = await GetDirectorySize(subdirectory);
 

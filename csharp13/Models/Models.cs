@@ -1,18 +1,11 @@
 ﻿namespace DirectorySize.Models;
 
-public record DirectoryStatistics
+public record DirectoryStatistics(string Path, long DirectorySize, long FileCount)
 {
-    public long DirectorySize { get; set; } = 0L;
-    public string Path { get; set; } = string.Empty;
-    public long FileCount { get; set; } = 0L;
-    public List<DirectoryStatistics> Subdirectories { get; } = new();
-
-    public DirectoryStatistics(string _path, long _directorySize, long _fileCount)
-    {
-        DirectorySize = _directorySize;
-        FileCount = _fileCount;
-        Path = _path;
-    }
+    public long DirectorySize { get; set; } = DirectorySize;
+    public string Path { get; set; } = Path;
+    public long FileCount { get; set; } = FileCount;
+    public List<DirectoryStatistics> Subdirectories { get; } = [];
 }
 
 public record DirectoryErrorInfo
