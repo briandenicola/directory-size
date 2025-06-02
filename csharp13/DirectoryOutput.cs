@@ -11,7 +11,7 @@ public class DirectoryOutput
 
     public DirectoryOutput(){}    
 
-    public void DisplayTable(DirectoryStatistics stats)
+    public static void DisplayTable(DirectoryStatistics stats)
     {
         var stack = new Stack<DirectoryStatistics>();
         stack.Push(stats);
