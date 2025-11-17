@@ -6,7 +6,7 @@ on:
       tag:
         description: 'The Release tag for this run'
         required: true
-        default: '13.12.0'
+        default: '14.1.0'
 
 jobs:
   create_tag:
@@ -14,7 +14,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: './csharp13'
+        working-directory: './csharp14'
         
     steps:
     - name: Create Release
@@ -36,7 +36,7 @@ jobs:
       
     defaults:
       run:
-        working-directory: './csharp13'
+        working-directory: './csharp14'
       
     strategy:
       matrix:
@@ -51,7 +51,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
         
     - name: Build and Publish ${{ matrix.runtime }} runtime
       run: dotnet publish -c Release -r ${{ matrix.runtime }} --nologo -o publish
@@ -67,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create_tag.outputs.upload_url }}
-        asset_path: ./csharp13/directorysize-${{ matrix.runtime }}.tar.gz
+        asset_path: ./csharp14/directorysize-${{ matrix.runtime }}.tar.gz
         asset_name: directorysize-${{ matrix.runtime }}.tar.gz
         asset_content_type: application/tar
 
@@ -76,7 +76,7 @@ jobs:
       
     defaults:
       run:
-        working-directory: './csharp13'
+        working-directory: './csharp14'
       
     strategy:
       matrix:
@@ -107,6 +107,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create_tag.outputs.upload_url }}
-        asset_path: ./csharp13/directorysize-${{ matrix.runtime }}.tar.gz
+        asset_path: ./csharp14/directorysize-${{ matrix.runtime }}.tar.gz
         asset_name: directorysize-${{ matrix.runtime }}.tar.gz
         asset_content_type: application/tar
