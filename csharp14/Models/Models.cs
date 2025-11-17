@@ -5,7 +5,11 @@
 /// </summary>
 public class DirectoryStatistics
 {
-    public required string Path { get; init; }
+    public required string Path { 
+        get;
+        init => field = value ?? throw new ArgumentNullException(nameof(value));
+    }
+    
     public required long DirectorySize { get; set; }
     public required long FileCount { get; set; }
     public required HashSet<DirectoryStatistics> Subdirectories { get; init; }

@@ -101,7 +101,7 @@ class DirectoryRepository
             lock (_lock)
             {
                 _counter++;
-                _totalDirectoryStats!.Subdirectories.Add(subDirectoryStats);
+                _totalDirectoryStats.Subdirectories.Add(subDirectoryStats);
                 _totalDirectoryStats.FileCount += subDirectoryStats.FileCount;
                 _totalDirectoryStats.DirectorySize += subDirectoryStats.DirectorySize;
                 ReportProgress(_counter, totalDirectoryCount);
