@@ -1,18 +1,17 @@
-﻿var directoryOption = new Option<DirectoryInfo>(
-    aliases: ["--path", "-p"],
-    description: "The folder path to check the size of"
-)
+﻿var directoryOption = new Option<DirectoryInfo>("--path", "-p")
 {
-    IsRequired = true
+    Description = "The root folder path to check the size of",
+    Required = true
 };
 
-RootCommand rootCommand = new("A demo app to show the size of all sub-folders under a directory")
+RootCommand rootCommand = new("An application that displays the size of all subfolders under a directory")
 {
     directoryOption
 };
 
-rootCommand.SetHandler(path =>
+rootCommand.SetAction(parseResult =>
 {
+    var path = parseResult.GetValue(directoryOption);
     if (path is null || !path.Exists)
     {
         Console.Error.WriteLine("Please provide a valid directory path.");
@@ -22,6 +21,7 @@ rootCommand.SetHandler(path =>
     var repo = new DirectoryRepository(path.FullName);
     repo.Analyze();
     repo.Display();
-}, directoryOption);
+});
 
-return await rootCommand.InvokeAsync(args.Length == 0 ? ["--help"] : args);
+var parseResult = rootCommand.Parse(args.Length == 0 ? ["--help"] : args);
+return await parseResult.InvokeAsync();
