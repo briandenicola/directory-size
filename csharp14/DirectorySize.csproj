@@ -6,7 +6,7 @@
     <LangVersion>14.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <VersionSuffix>14.0.$([System.DateTime]::UtcNow.ToString(mmff))</VersionSuffix>
+    <VersionSuffix>14.5.$([System.DateTime]::UtcNow.ToString(mmff))</VersionSuffix>
     <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishSingleFile>false</PublishSingleFile>
