@@ -12,10 +12,12 @@ public class DirectoryStatistics
     
     public required long DirectorySize { get; set; }
     public required long FileCount { get; set; }
+    public required DateTime LastModified { get; set; }
     public required HashSet<DirectoryStatistics> Subdirectories { get; init; }
 
     public DirectoryStatistics()
     {
+        LastModified = DateTime.MinValue;
         Subdirectories = [];
     }
 
@@ -24,6 +26,7 @@ public class DirectoryStatistics
         Path = path;
         DirectorySize = directorySize;
         FileCount = fileCount;
+        LastModified = DateTime.MinValue;
         Subdirectories = [];
     }
 }

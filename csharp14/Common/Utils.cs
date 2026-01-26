@@ -57,4 +57,30 @@ public static class Utils
 
         return new string(buffer[..pos]);
     }
+
+    public static string ToRelativeTime(DateTime value, DateTime now)
+    {
+        if (value == DateTime.MinValue)
+            return "-";
+
+        if (value > now)
+            return "0s";
+
+        var delta = now - value;
+
+        if (delta.TotalSeconds < 60)
+            return $"{(int)delta.TotalSeconds}s";
+        if (delta.TotalMinutes < 60)
+            return $"{(int)delta.TotalMinutes}m";
+        if (delta.TotalHours < 24)
+            return $"{(int)delta.TotalHours}h";
+        if (delta.TotalDays < 7)
+            return $"{(int)delta.TotalDays}d";
+        if (delta.TotalDays < 28)
+            return $"{(int)(delta.TotalDays / 7)}w";
+        if (delta.TotalDays < 365)
+            return $"{(int)(delta.TotalDays / 30)}mo";
+
+        return $"{(int)(delta.TotalDays / 365)}y";
+    }
 }

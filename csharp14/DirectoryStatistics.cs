@@ -19,10 +19,21 @@ class DirectoryRepository
     private static void ReportProgress(int completed, int total) =>
         ProgressBar.Report(total, ComputePercentage(completed, total));
 
+    private static DirectoryStatistics CreateEmptyStats(string path) => new DirectoryStatistics
+    {
+        Path            = path,
+        DirectorySize   = 0L,
+        FileCount       = 0L,
+        LastModified    = DateTime.MinValue,
+        Subdirectories  = []
+    };
+
     private static DirectoryStatistics GetCurrentDirectoryStats(string path)
     {
+        var stats = CreateEmptyStats(path);
+
         try
-        {            
+        {
             long totalSize = 0;
             int fileCount = 0;
 
@@ -43,33 +54,19 @@ class DirectoryRepository
                 catch { /* Skip inaccessible files */ }
             }
 
-            return new DirectoryStatistics
-            {
-                Path            = path, 
-                DirectorySize   = totalSize, 
-                FileCount       = fileCount,
-                Subdirectories  = []
-            };
+            stats.DirectorySize = totalSize;
+            stats.FileCount = fileCount;
+            stats.LastModified = Directory.GetLastWriteTime(path);
         }
         catch
         {
-            return new DirectoryStatistics
-            {
-                Path            = path, 
-                DirectorySize   = 0L, 
-                FileCount       = 0L,
-                Subdirectories  = []
-            };
         }
+
+        return stats;
     }
 
     public void Display() => DirectoryOutput.DisplayTable(_totalDirectoryStats ?? 
-        new DirectoryStatistics{
-            Path            = string.Empty, 
-            DirectorySize   = 0L, 
-            FileCount       = 0L,
-            Subdirectories  = []
-        });
+        CreateEmptyStats(string.Empty));
 
     public long GetRuntime() => _runtime;
 
@@ -114,18 +111,10 @@ class DirectoryRepository
 
     private DirectoryStatistics GetDirectorySize(string path)
     {
-        var currentDirectoryStats = new DirectoryStatistics
-            {
-                Path            = path, 
-                DirectorySize   = 0L, 
-                FileCount       = 0L,
-                Subdirectories = []
-            };
+        var currentDirectoryStats = GetCurrentDirectoryStats(path);
 
         try
         {
-            currentDirectoryStats = GetCurrentDirectoryStats(path);
-
             foreach (var subdirectory in Directory.EnumerateDirectories(path))
             {
                 var stats = GetDirectorySize(subdirectory);
