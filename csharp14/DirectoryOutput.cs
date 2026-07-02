@@ -10,82 +10,105 @@ public static class DirectoryOutput
     {
         var stack = new Stack<DirectoryStatistics>();
         stack.Push(stats);
+        var sortMode = SortMode.SizeDesc;
 
-        while (stack.Count > 0)
+        AnsiConsole.Cursor.Hide();
+        AnsiConsole.Clear();
+
+        try
         {
-            var current = stack.Peek();
-            var subdirectories = current.Subdirectories
-                .OrderByDescending(d => d.DirectorySize)
-                .ThenBy(d => d.Path, StringComparer.OrdinalIgnoreCase)
-                .ToList();
-            var topFiles = GetTopFiles(current.Path);
-            var navigationEntries = BuildNavigationEntries(stack, subdirectories);
-            var selectedIndex = 0;
-            var action = NavigationAction.None;
-
-            while (action == NavigationAction.None)
-            {
-                AnsiConsole.Clear();
-                RenderBrowser(stack, current, navigationEntries, selectedIndex, topFiles);
-
-                var key = Console.ReadKey(true).Key;
-                switch (key)
+            AnsiConsole.Live(new Text(""))
+                .Overflow(VerticalOverflow.Crop)
+                .Start(ctx =>
                 {
-                    case ConsoleKey.UpArrow:
-                        selectedIndex = Math.Max(0, selectedIndex - 1);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        selectedIndex = Math.Min(navigationEntries.Count - 1, selectedIndex + 1);
-                        break;
-                    case ConsoleKey.Enter:
-                        action = GetAction(navigationEntries[selectedIndex]);
-                        break;
-                    case ConsoleKey.Escape:
-                        action = NavigationAction.Exit;
-                        break;
-                }
-            }
+                    while (stack.Count > 0)
+                    {
+                        var current = stack.Peek();
+                        var subdirectories = ApplySort(current.Subdirectories, sortMode);
+                        var topFiles = GetTopFiles(current.Path);
+                        var navigationEntries = BuildNavigationEntries(stack, subdirectories);
+                        var selectedIndex = 0;
+                        var action = NavigationAction.None;
 
-            if (action == NavigationAction.Exit)
-                return;
+                        while (action == NavigationAction.None)
+                        {
+                            var layout = RenderBrowser(stack, current, navigationEntries, selectedIndex, topFiles, sortMode);
+                            ctx.UpdateTarget(layout);
 
-            if (action == NavigationAction.Parent)
-            {
-                stack.Pop();
-                continue;
-            }
+                            var key = Console.ReadKey(true);
+                            switch (key.Key)
+                            {
+                                case ConsoleKey.UpArrow:
+                                    selectedIndex = Math.Max(0, selectedIndex - 1);
+                                    break;
+                                case ConsoleKey.DownArrow:
+                                    selectedIndex = Math.Min(navigationEntries.Count - 1, selectedIndex + 1);
+                                    break;
+                                case ConsoleKey.Enter:
+                                    action = GetAction(navigationEntries[selectedIndex]);
+                                    break;
+                                case ConsoleKey.Escape:
+                                    action = NavigationAction.Exit;
+                                    break;
+                                case ConsoleKey.S:
+                                    sortMode = NextSortMode(sortMode);
+                                    action = NavigationAction.SortChanged;
+                                    break;
+                            }
+                        }
 
-            if (action == NavigationAction.Open)
-            {
-                var selectedDirectory = subdirectories.FirstOrDefault(d =>
-                    string.Equals(d.Path, navigationEntries[selectedIndex].Path, StringComparison.OrdinalIgnoreCase));
+                        if (action == NavigationAction.SortChanged)
+                            continue;
 
-                if (selectedDirectory is not null)
-                    stack.Push(selectedDirectory);
-            }
+                        if (action == NavigationAction.Exit)
+                            return;
+
+                        if (action == NavigationAction.Parent)
+                        {
+                            stack.Pop();
+                            continue;
+                        }
+
+                        if (action == NavigationAction.Open)
+                        {
+                            var selectedDirectory = subdirectories.FirstOrDefault(d =>
+                                string.Equals(d.Path, navigationEntries[selectedIndex].Path, StringComparison.OrdinalIgnoreCase));
+
+                            if (selectedDirectory is not null)
+                                stack.Push(selectedDirectory);
+                        }
+                    }
+                });
+        }
+        finally
+        {
+            AnsiConsole.Cursor.Show();
+            AnsiConsole.Clear();
         }
     }
 
-    private static void RenderBrowser(
+    private static Rows RenderBrowser(
         Stack<DirectoryStatistics> stack,
         DirectoryStatistics current,
         IReadOnlyList<NavigationEntry> navigationEntries,
         int selectedIndex,
-        IReadOnlyList<(string Name, long Size)> topFiles)
+        IReadOnlyList<(string Name, long Size)> topFiles,
+        SortMode sortMode)
     {
         var consoleWidth = GetConsoleWidth();
-        var headerPanel = BuildHeaderPanel(stack, current, navigationEntries.Count);
-        var directoryTable = BuildDirectoryTable(navigationEntries, selectedIndex, consoleWidth);
+        var pageSize = GetPageSize();
+        var headerPanel = BuildHeaderPanel(stack, current, navigationEntries.Count, sortMode);
+        var directoryTable = BuildDirectoryTable(navigationEntries, selectedIndex, consoleWidth, pageSize);
         var filesPanel = BuildTopFilesPanel(topFiles, consoleWidth);
 
-        AnsiConsole.Write(headerPanel);
-        AnsiConsole.WriteLine();
-        AnsiConsole.Write(directoryTable);
-        AnsiConsole.WriteLine();
-        AnsiConsole.Write(filesPanel);
+        return new Rows(
+            headerPanel,
+            directoryTable,
+            filesPanel
+        );
     }
 
-    private static Panel BuildHeaderPanel(Stack<DirectoryStatistics> pathStack, DirectoryStatistics current, int navigationCount)
+    private static Panel BuildHeaderPanel(Stack<DirectoryStatistics> pathStack, DirectoryStatistics current, int navigationCount, SortMode sortMode)
     {
         var pathSegments = pathStack.ToArray();
         Array.Reverse(pathSegments);
@@ -98,7 +121,7 @@ public static class DirectoryOutput
             $"[grey]Files:[/] [green]{Utils.ToNumberFormat(current.FileCount)}[/]  [grey]Size:[/] [green]{Utils.ToMB(current.DirectorySize)}[/]",
             $"[grey]Modified:[/] [magenta]{FormatTimestamp(current.LastModified)}[/]",
             $"[grey]Path:[/] {breadcrumbs}",
-            $"[grey]Items:[/] {navigationCount}   [grey]↑/↓ move • Enter open • Esc exit[/]"
+            $"[grey]Items:[/] {navigationCount}   [grey]↑/↓ move • Enter open • Esc exit • (S)ort: {GetSortLabel(sortMode)}[/]"
         });
 
         return new Panel(new Markup(summary))
@@ -107,20 +130,20 @@ public static class DirectoryOutput
             .Expand();
     }
 
-    private static Table BuildDirectoryTable(IReadOnlyList<NavigationEntry> entries, int selectedIndex, int consoleWidth)
+    private static Table BuildDirectoryTable(IReadOnlyList<NavigationEntry> entries, int selectedIndex, int consoleWidth, int pageSize)
     {
         var table = new Table()
             .Border(TableBorder.Rounded)
             .BorderColor(Color.Grey)
             .Expand();
 
-        table.AddColumn("[bold][/]");
-        table.AddColumn("[bold]Name[/]");
+        table.AddColumn(new TableColumn("[bold][/]").Width(2));
+        table.AddColumn(new TableColumn("[bold]Name[/]"));
         if (consoleWidth >= 90)
-            table.AddColumn("[bold]Files[/]");
-        table.AddColumn("[bold]Size[/]");
+            table.AddColumn(new TableColumn("[bold]Files[/]").Width(12));
+        table.AddColumn(new TableColumn("[bold]Size[/]").Width(12));
         if (consoleWidth >= 120)
-            table.AddColumn("[bold]Modified[/]");
+            table.AddColumn(new TableColumn("[bold]Modified[/]").Width(16));
 
         if (entries.Count == 0)
         {
@@ -135,7 +158,23 @@ public static class DirectoryOutput
             return table;
         }
 
-        for (var index = 0; index < entries.Count; index++)
+        int startIndex = 0;
+        int endIndex = entries.Count;
+
+        if (entries.Count > pageSize)
+        {
+            startIndex = Math.Max(0, selectedIndex - (pageSize / 2));
+            endIndex = startIndex + pageSize;
+
+            if (endIndex > entries.Count)
+            {
+                endIndex = entries.Count;
+                startIndex = Math.Max(0, endIndex - pageSize);
+            }
+        }
+
+        int addedRows = 0;
+        for (var index = startIndex; index < endIndex; index++)
         {
             var entry = entries[index];
             var isSelected = index == selectedIndex;
@@ -170,6 +209,17 @@ public static class DirectoryOutput
             }
 
             table.AddRow(row.ToArray());
+            addedRows++;
+        }
+
+        // Pad with empty rows to strictly lock the table height
+        for (var i = addedRows; i < pageSize; i++)
+        {
+            var blankRow = new List<string> { " ", " " };
+            if (consoleWidth >= 90) blankRow.Add(" ");
+            blankRow.Add(" ");
+            if (consoleWidth >= 120) blankRow.Add(" ");
+            table.AddRow(blankRow.ToArray());
         }
 
         return table;
@@ -188,15 +238,25 @@ public static class DirectoryOutput
         if (topFiles.Count == 0)
         {
             table.AddRow("[grey](no files)[/]", "-");
+            for (var i = 1; i < 5; i++)
+                table.AddRow(" ", " ");
         }
         else
         {
+            int addedRows = 0;
             foreach (var (name, size) in topFiles)
             {
                 var displayName = Truncate(Path.GetFileName(name), Math.Clamp(consoleWidth / 3, 16, 40));
                 table.AddRow(
                     $"[white]{Utils.EscapeMarkup(displayName)}[/]",
                     $"[green]{Utils.ToMB(size)}[/]");
+                addedRows++;
+            }
+
+            // Pad with empty rows to lock the file table height to exactly 5
+            for (var i = addedRows; i < 5; i++)
+            {
+                table.AddRow(" ", " ");
             }
         }
 
@@ -231,12 +291,15 @@ public static class DirectoryOutput
 
     private static string BuildEntryName(NavigationEntry entry, int consoleWidth)
     {
-        return entry.Kind switch
+        var maxLength = Math.Clamp(consoleWidth / 4, 20, 36);
+        var text = entry.Kind switch
         {
-            NavigationKind.Parent => Truncate("⬆ Parent", Math.Clamp(consoleWidth / 4, 20, 36)),
-            NavigationKind.Exit => Truncate("✕ Exit", Math.Clamp(consoleWidth / 4, 20, 36)),
-            _ => Truncate(GetDisplayName(entry.Path), Math.Clamp(consoleWidth / 4, 20, 36))
+            NavigationKind.Parent => "⬆ Parent",
+            NavigationKind.Exit => "✕ Exit",
+            _ => GetDisplayName(entry.Path)
         };
+        
+        return Truncate(text, maxLength).PadRight(maxLength);
     }
 
     private static string FormatTimestamp(DateTime value)
@@ -261,8 +324,10 @@ public static class DirectoryOutput
 
     private static int GetPageSize()
     {
-        var height = Math.Max(5, Console.WindowHeight > 0 ? Console.WindowHeight : 25);
-        return Math.Clamp(height / 2, 5, 12);
+        var height = Console.WindowHeight > 0 ? Console.WindowHeight : 25;
+        // Increase the margin to account for panel borders, padding, and to prevent 
+        // the terminal from scrolling if we write exactly to the bottom edge.
+        return Math.Max(3, height - 26);
     }
 
     private static string Truncate(string value, int maxLength)
@@ -301,6 +366,42 @@ public static class DirectoryOutput
             .ToList();
     }
 
+    private static IReadOnlyList<DirectoryStatistics> ApplySort(IEnumerable<DirectoryStatistics> directories, SortMode mode)
+    {
+        return mode switch
+        {
+            SortMode.SizeDesc => directories.OrderByDescending(d => d.DirectorySize).ThenBy(d => d.Path, StringComparer.OrdinalIgnoreCase).ToList(),
+            SortMode.SizeAsc => directories.OrderBy(d => d.DirectorySize).ThenBy(d => d.Path, StringComparer.OrdinalIgnoreCase).ToList(),
+            SortMode.CountDesc => directories.OrderByDescending(d => d.FileCount).ThenBy(d => d.Path, StringComparer.OrdinalIgnoreCase).ToList(),
+            SortMode.CountAsc => directories.OrderBy(d => d.FileCount).ThenBy(d => d.Path, StringComparer.OrdinalIgnoreCase).ToList(),
+            SortMode.NameDesc => directories.OrderByDescending(d => d.Path, StringComparer.OrdinalIgnoreCase).ToList(),
+            SortMode.NameAsc => directories.OrderBy(d => d.Path, StringComparer.OrdinalIgnoreCase).ToList(),
+            _ => directories.ToList()
+        };
+    }
+
+    private static string GetSortLabel(SortMode mode) => mode switch
+    {
+        SortMode.SizeDesc => "Size ↓",
+        SortMode.SizeAsc => "Size ↑",
+        SortMode.CountDesc => "Count ↓",
+        SortMode.CountAsc => "Count ↑",
+        SortMode.NameDesc => "Name ↓",
+        SortMode.NameAsc => "Name ↑",
+        _ => ""
+    };
+
+    private static SortMode NextSortMode(SortMode mode) => mode switch
+    {
+        SortMode.SizeDesc => SortMode.SizeAsc,
+        SortMode.SizeAsc => SortMode.CountDesc,
+        SortMode.CountDesc => SortMode.CountAsc,
+        SortMode.CountAsc => SortMode.NameDesc,
+        SortMode.NameDesc => SortMode.NameAsc,
+        SortMode.NameAsc => SortMode.SizeDesc,
+        _ => SortMode.SizeDesc
+    };
+
     private static string GetDisplayName(string path)
     {
         var trimmed = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -322,6 +423,17 @@ public static class DirectoryOutput
         None,
         Parent,
         Open,
-        Exit
+        Exit,
+        SortChanged
+    }
+
+    private enum SortMode
+    {
+        SizeDesc,
+        SizeAsc,
+        CountDesc,
+        CountAsc,
+        NameDesc,
+        NameAsc
     }
 }
